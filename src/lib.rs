@@ -20,7 +20,8 @@ macro_rules! log {
 }
 
 // Auto-starts on page load
-#[wasm_bindgen(start)]
+//#[wasm_bindgen(start)]
+#[wasm_bindgen]
 pub fn start() {
     let document = web_sys::window().unwrap().document().unwrap();
     let canvas = document.get_element_by_id("canvas").unwrap();
