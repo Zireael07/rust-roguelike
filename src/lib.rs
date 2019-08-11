@@ -12,11 +12,21 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 use wasm_bindgen::JsCast; // for dyn_into
 use std::f64;
 
+//for getting vals to JS side
+use std::os::raw::{c_double, c_int};
+
+
 // A macro to provide `println!(..)`-style syntax for `console.log` logging.
 macro_rules! log {
     ( $( $t:tt )* ) => {
         web_sys::console::log_1(&format!( $( $t )* ).into());
     }
+}
+
+//use raw_module because we need a relative path
+#[wasm_bindgen(raw_module = "../www/js/js-renderer.js")]
+extern "C" {
+    fn renderPlayer(x: c_double, y: c_double);
 }
 
 // Auto-starts on page load
@@ -42,4 +52,6 @@ pub fn start() {
     //clear
     context.set_fill_style(&wasm_bindgen::JsValue::from_str("black"));
     context.fill_rect(0.0, 0.0, 800.0, 600.0);
+
+    renderPlayer(1.0,1.0);
 }
