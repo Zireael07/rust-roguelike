@@ -2,3 +2,4 @@ node_modules
 /target
 /Cargo.lock
 /package-lock.json
+/www/package-lock.json

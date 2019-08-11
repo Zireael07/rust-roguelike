@@ -2,9 +2,11 @@
   "author": "Zir",
   "name": "rust-web-roguelike",
   "version": "0.1.0",
+  "description": "Rust web roguelike engine",
+  "main": "index.js",
   "scripts": {
-    "build": "rimraf dist pkg && webpack",
-    "start": "rimraf dist pkg && webpack-dev-server --open -d",
+    "build": "webpack --config webpack.config.js",
+    "start": "webpack-dev-server --config webpack.config.js --open -d",
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {

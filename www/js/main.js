@@ -1,4 +1,4 @@
-import * as wasm from "../pkg/index.js";
+import * as wasm from "../../pkg/index.js";
 //triggers loading of resources in some way...
 import * as resources from "./resources.js";
 
