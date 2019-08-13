@@ -32,6 +32,47 @@ extern "C" {
     fn renderPlayer(x: c_double, y: c_double);
 }
 
+#[wasm_bindgen]
+pub struct Game {
+    canvas: web_sys::HtmlCanvasElement,
+    context: web_sys::CanvasRenderingContext2d,
+    player_x: i32,
+    player_y: i32,
+} 
+
+impl Game {
+
+}
+
+/// Public methods, exported to JavaScript.
+#[wasm_bindgen]
+impl Game {
+
+    //constructor
+    pub fn new(canvas: web_sys::HtmlCanvasElement, context: web_sys::CanvasRenderingContext2d) -> Game {
+        Game { canvas, context, player_x: 1, player_y: 1 }
+    }
+
+    pub fn player_move(&mut self, dx: i32, dy: i32){
+        log!("Player_move: {} , {}", dx, dy);
+        if self.player_x + dx > 0 && self.player_y + dy > 0 {
+            //move
+            self.player_x += dx;
+            self.player_y += dy;
+        }
+    }
+
+    //shorthand for ease of use
+    pub fn pos_x(&self) -> i32 {
+        self.player_x
+    }
+
+    pub fn pos_y(&self) -> i32 {
+        self.player_y
+    }
+
+}
+
 // Auto-starts on page load
 //#[wasm_bindgen(start)]
 #[wasm_bindgen]
@@ -52,14 +93,17 @@ pub fn start() {
 
     //log!("We have a context {:?}", context);
 
+    //init game
+    let mut game = Game::new(canvas, context);
 
     //clear
-    context.set_fill_style(&wasm_bindgen::JsValue::from_str("black"));
-    context.fill_rect(0.0, 0.0, 800.0, 600.0);
+    game.context.set_fill_style(&wasm_bindgen::JsValue::from_str("black"));
+    game.context.fill_rect(0.0, 0.0, 800.0, 600.0);
 
     //renderPlayer(player_x as c_double,player_y as c_double);
+    game.player_move(0,1);
 
-    run(context);
+    run(game);
 }
 
 
@@ -76,7 +120,7 @@ fn request_animation_frame(f: &Closure<dyn FnMut()>) {
         .expect("should register `requestAnimationFrame` OK");
 }
 
-pub fn run(ctx: web_sys::CanvasRenderingContext2d) -> Result<(), JsValue> {
+pub fn run(game: Game) -> Result<(), JsValue> {
     // Here we want to call `requestAnimationFrame` in a loop
     // After it's done we want all our resources cleaned up. To
     // achieve this we're using an `Rc`. The `Rc` will eventually store the
@@ -88,9 +132,11 @@ pub fn run(ctx: web_sys::CanvasRenderingContext2d) -> Result<(), JsValue> {
     // used to store the closure, request the first frame, and then is dropped
     // by this function.
     
-    log!("Running the loop...");
+    //this is not a loop yet
+    //let mut ctx = game.context; //value moved problem
 
-    log!("We have a context {:?}", ctx);
+    //log!("Running the loop...");
+    //log!("We have a context {:?}", ctx);
 
 
     // Inside the closure we've got a persistent `Rc` reference, which we use
@@ -99,6 +145,10 @@ pub fn run(ctx: web_sys::CanvasRenderingContext2d) -> Result<(), JsValue> {
     let g = f.clone();
 
     let mut i = 0;
+
+    //main loop
+    //1. clear
+    //2. draw
     *g.borrow_mut() = Some(Closure::wrap(Box::new(move || {
 
         // Display how many times this requestAnimationFrame callback has fired.
@@ -106,12 +156,12 @@ pub fn run(ctx: web_sys::CanvasRenderingContext2d) -> Result<(), JsValue> {
         let text = format!("requestAnimationFrame has been called {} times.", i);
 
         //clear
-        ctx.set_fill_style(&wasm_bindgen::JsValue::from_str("black"));
-        ctx.fill_rect(0.0, 0.0, 800.0, 600.0);
+        game.context.set_fill_style(&wasm_bindgen::JsValue::from_str("black"));
+        game.context.fill_rect(0.0, 0.0, 800.0, 600.0);
 
-        ctx.set_fill_style(&wasm_bindgen::JsValue::from_str("rgb(255, 255, 255"));
-        ctx.fill_text(&text, 2.0, 20.0);
-        renderPlayer(1.0, 1.0);
+        game.context.set_fill_style(&wasm_bindgen::JsValue::from_str("rgb(255, 255, 255"));
+        game.context.fill_text(&text, 2.0, 20.0);
+        renderPlayer(game.player_x as c_double, game.player_y as c_double);
 
         // Schedule ourself for another requestAnimationFrame callback.
         request_animation_frame(f.borrow().as_ref().unwrap());
