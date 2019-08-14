@@ -101,9 +101,9 @@ pub fn start() {
     game.context.fill_rect(0.0, 0.0, 800.0, 600.0);
 
     //renderPlayer(player_x as c_double,player_y as c_double);
-    game.player_move(0,1);
+    //game.player_move(0,1);
 
-    run(game);
+    //run(game);
 }
 
 
@@ -120,6 +120,7 @@ fn request_animation_frame(f: &Closure<dyn FnMut()>) {
         .expect("should register `requestAnimationFrame` OK");
 }
 
+// not used for now, keeping for posterity
 pub fn run(game: Game) -> Result<(), JsValue> {
     // Here we want to call `requestAnimationFrame` in a loop
     // After it's done we want all our resources cleaned up. To

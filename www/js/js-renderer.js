@@ -9,3 +9,8 @@ export function renderPlayer(x,y){
 export function renderGfxTile(img, x, y) {
     ctx.drawImage(img, x*32, y*32);
 }
+
+export function clearCanvas(){
+    ctx.fillStyle = 'rgb(0,0,0)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
